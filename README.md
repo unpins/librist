@@ -54,6 +54,7 @@ The [Releases](https://github.com/unpins/librist/releases) page has standalone b
 
 - **Single multicall binary** — the four tools are post-linked into one `rist`; tool names are recreated as `argv[0]` shims on install.
 - **mbedtls, not OpenSSL** — smaller crypto closure; SRP-authenticated and AES-encrypted streams work unchanged.
+- **No man pages** — librist ships none upstream; each tool prints its options with `--help`.
 - **Windows:** `mingw` cross, single `.exe`, no companion DLLs. Ships all four tools.
 
 Platform fixes live in [`nix-lib/native-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/native-overlay/librist.nix) + [`nix-lib/mingw-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/mingw-overlay/librist.nix); the multicall link recipe is in [`multicall.nix`](./multicall.nix).

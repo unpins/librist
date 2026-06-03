@@ -1,6 +1,6 @@
 # librist
 
-Standalone build of the [librist](https://code.videolan.org/rist/librist) (Reliable Internet Stream Transport) command-line tools.
+Standalone build of the [librist](https://code.videolan.org/rist/librist) (Reliable Internet Stream Transport) command-line programs.
 
 [![Build](https://github.com/unpins/librist/actions/workflows/librist.yml/badge.svg)](https://github.com/unpins/librist/actions)
 ![Linux](https://img.shields.io/badge/Linux-✓-success?logo=linux&logoColor=white)
@@ -9,12 +9,7 @@ Standalone build of the [librist](https://code.videolan.org/rist/librist) (Relia
 
 Part of the [unpins](https://unpins.org) project — native single-binary builds with no third-party runtime dependencies.
 
-Low-latency, reliable transport of streams over lossy networks (RIST TR-06-1/2), a libre alternative to SRT. Ships the upstream programs:
-
-- `ristsender` — send a stream (UDP/file in) over RIST.
-- `ristreceiver` — receive a RIST stream and output it (UDP/file/stdout).
-- `rist2rist` — relay/repackage one RIST stream into another.
-- `ristsrppasswd` — manage SRP authentication password files.
+Low-latency, reliable transport of streams over lossy networks (RIST TR-06-1/2), a libre alternative to SRT.
 
 ## Usage
 
@@ -32,6 +27,15 @@ unpin install librist
 ```
 
 `unpin install librist` creates the `ristsender`, `ristreceiver`, `rist2rist`, and `ristsrppasswd` commands.
+
+## Programs
+
+| command | what it does |
+| --- | --- |
+| `ristsender` | send a stream (UDP / file in) over RIST |
+| `ristreceiver` | receive a RIST stream and output it (UDP / file / stdout) |
+| `rist2rist` | relay / repackage one RIST stream into another |
+| `ristsrppasswd` | manage SRP authentication password files |
 
 ## Build locally
 

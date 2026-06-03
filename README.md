@@ -9,33 +9,29 @@ Standalone build of the [librist](https://code.videolan.org/rist/librist) (Relia
 
 Part of the [unpins](https://unpins.org) project — native single-binary builds with no third-party runtime dependencies.
 
-Low-latency, reliable transport of streams over lossy networks (RIST TR-06-1/2), a libre alternative to SRT. Ships as one multicall binary that dispatches to the upstream tools:
+Low-latency, reliable transport of streams over lossy networks (RIST TR-06-1/2), a libre alternative to SRT. Ships the upstream programs:
 
 - `ristsender` — send a stream (UDP/file in) over RIST.
 - `ristreceiver` — receive a RIST stream and output it (UDP/file/stdout).
 - `rist2rist` — relay/repackage one RIST stream into another.
 - `ristsrppasswd` — manage SRP authentication password files.
 
-Run a tool by name or via the dispatcher:
+## Usage
+
+Run a program with [unpin](https://github.com/unpins/unpin):
 
 ```bash
-ristsender -i udp://:1234 -o rist://example:1968   # by name
-rist sender -i udp://:1234 -o rist://example:1968   # via the rist dispatcher
+unpin librist ristsender -i udp://:1234 -o rist://example:1968
+unpin librist ristreceiver -i rist://@:1968 -o udp://example:1234
 ```
 
-## Installation
-
-Install with [unpin](https://github.com/unpins/unpin):
+To install the programs onto your PATH:
 
 ```bash
-unpin librist
+unpin install librist
 ```
 
-Or run without installing:
-
-```bash
-unpin run librist -- ristsender --help
-```
+`unpin install librist` creates the `ristsender`, `ristreceiver`, `rist2rist`, and `ristsrppasswd` commands.
 
 ## Build locally
 

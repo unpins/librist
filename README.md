@@ -20,22 +20,11 @@ unpin librist ristsender -i udp://:1234 -o rist://example:1968
 unpin librist ristreceiver -i rist://@:1968 -o udp://example:1234
 ```
 
-To install the programs onto your PATH:
+`unpin install librist` also creates the commands `ristsender` (send), `ristreceiver` (receive), `rist2rist` (relay) and `ristsrppasswd` (manage SRP password files):
 
 ```bash
 unpin install librist
 ```
-
-`unpin install librist` creates the `ristsender`, `ristreceiver`, `rist2rist`, and `ristsrppasswd` commands.
-
-## Programs
-
-| command | what it does |
-| --- | --- |
-| `ristsender` | send a stream (UDP / file in) over RIST |
-| `ristreceiver` | receive a RIST stream and output it (UDP / file / stdout) |
-| `rist2rist` | relay / repackage one RIST stream into another |
-| `ristsrppasswd` | manage SRP authentication password files |
 
 ## Build locally
 

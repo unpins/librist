@@ -21,6 +21,8 @@
     ulib.mkStandaloneFlake {
       inherit self;
       name = "rist";
+      # librist ships under BSD-2-Clause; the MIT/ISC bits are vendored helpers.
+      license = "BSD-2-Clause";
 
       # Pure C, so no libc++ static-link dance (cf. srt). Linux/darwin
       # pkgsStatic links the musl/system libc statically already.

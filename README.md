@@ -1,13 +1,13 @@
 # librist
 
-Standalone build of the [librist](https://code.videolan.org/rist/librist) (Reliable Internet Stream Transport) command-line programs.
+The [librist](https://code.videolan.org/rist/librist) (Reliable Internet Stream Transport) command-line programs, as a single self-contained binary built natively for Linux, macOS, and Windows.
 
 [![Build](https://github.com/unpins/librist/actions/workflows/librist.yml/badge.svg)](https://github.com/unpins/librist/actions)
 ![Linux](https://img.shields.io/badge/Linux-✓-success?logo=linux&logoColor=white)
 ![macOS](https://img.shields.io/badge/macOS-✓-success?logo=apple&logoColor=white)
 ![Windows](https://img.shields.io/badge/Windows-✓-success?logo=windows&logoColor=white)
 
-Part of the [unpins](https://unpins.org) project — native single-binary builds with no third-party runtime dependencies.
+Part of the [unpins](https://unpins.org) catalog; install it with [`unpin`](https://github.com/unpins/unpin): `unpin install librist`.
 
 Low-latency, reliable transport of streams over lossy networks (RIST TR-06-1/2), a libre alternative to SRT.
 

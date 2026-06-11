@@ -20,6 +20,7 @@
     in
     ulib.mkStandaloneFlake {
       inherit self;
+      dnsFallback = true; # resolves hostnames; opt into the Android DNS fallback
       name = "rist";
       # librist ships under BSD-2-Clause; the MIT/ISC bits are vendored helpers.
       license = "BSD-2-Clause";

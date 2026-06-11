@@ -1,5 +1,5 @@
 {
-  description = "Standalone build of librist tools (Reliable Internet Stream Transport)";
+  description = "librist tools (Reliable Internet Stream Transport) as a single self-contained binary";
 
   nixConfig = {
     extra-substituters = [ "https://unpins.cachix.org" ];

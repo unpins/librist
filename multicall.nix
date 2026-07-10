@@ -93,10 +93,13 @@ let
       done
 
       # Dispatcher (shared canonical generator — see nix-lib
-      # lib.multicallDispatcherC). It derives each app's C symbol from the applet
-      # name in multicall/apps.list via `tr -c 'A-Za-z0-9_' '_'`, matching the
-      # `tr '-' '_'` rename above (rist-* → rist_*).
-${lib.multicallDispatcherC { inherit name; }}
+      # lib.multicallTableDispatcherC). It reads multicall/applets.list as a TSV
+      # (tool<TAB>sanitized-C-symbol); san matches the `tr '-' '_'` rename above.
+      : > multicall/applets.list
+      for a in "''${apps[@]}"; do
+        printf '%s\t%s\n' "$a" "$(echo "$a" | tr '-' '_')" >> multicall/applets.list
+      done
+${lib.multicallTableDispatcherC { inherit name; }}
       $CC -O2 -c -o multicall/dispatcher.o multicall/dispatcher.c
 
       # Iterative link. Reuse the template tool's resolved ninja link line

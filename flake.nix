@@ -71,51 +71,12 @@
       build = pkgs:
         let
           eng = engStdenv pkgs;
-          isDarwin = pkgs.pkgsStatic.stdenv.hostPlatform.isDarwin;
-          # cmocka rides in librist's buildInputs (its own test suite, which we
-          # keep off via -Dtest=false), and cmocka-static's `waiter_test_wrap`
-          # self-test fails under musl — a wrap/timing flake in cmocka's checks,
-          # nothing we link. Disable cmocka's doCheck so the dead-weight dep just
-          # builds; it never enters the folded binary (closure stays 0-ref).
-          sp = pkgs.pkgsStatic.extend (_: prev: {
-            cmocka = prev.cmocka.overrideAttrs (_: { doCheck = false; });
-          } // pkgs.lib.optionalAttrs isDarwin {
-            # nixpkgs' mbedtls hardcodes -DCMAKE_C_FLAGS=-fzero-init-padding-bits=
-            # unions (a GCC-15 union-padding workaround). On Linux mbedtls builds
-            # under gcc (which has the flag); on darwin the engine builds the whole
-            # set with the unpin clang, which rejects the GCC-only flag → CMake's
-            # compiler check fails. clang has no equivalent, so strip it — darwin
-            # only, so Linux/cross keep their hash.
-            mbedtls = prev.mbedtls.overrideAttrs (o: {
-              cmakeFlags = builtins.filter
-                (f: f != "-DCMAKE_C_FLAGS=-fzero-init-padding-bits=unions")
-                (o.cmakeFlags or [ ])
-                # mbedtls' demo programs and test suite build with -Werror; on
-                # darwin pkgsStatic's inert `-static-libgcc` trips -Wunused-command-
-                # line-argument → fatal. We link only libmbed{crypto,tls,x509}.a,
-                # never the demos/tests, so skip building them entirely.
-                ++ [ "-DENABLE_PROGRAMS=OFF" "-DENABLE_TESTING=OFF" ];
-              # nixpkgs' mbedtls postConfigure runs `perl scripts/config.pl set …`
-              # to enable threading. Under the darwin engine cmake builds
-              # out-of-source (CWD = build/, scripts/ is a level up) whereas Linux
-              # builds in-source, so the relative path fails. Run it from wherever
-              # scripts/config.pl actually is, then return.
-              postConfigure = ''
-                __d=$PWD
-                [ -f scripts/config.pl ] || cd ..
-                ${o.postConfigure or ""}
-                cd "$__d"
-              '';
-            });
-            # cjson's CMake turns on -Werror (ENABLE_CUSTOM_COMPILER_FLAGS). On
-            # darwin pkgsStatic's inert `-static-libgcc` link flag (valid on
-            # Linux, no-op on darwin) trips -Wunused-command-line-argument, which
-            # -Werror makes fatal. Drop cjson's strict-flag block on darwin — its
-            # own warnings, nothing we depend on.
-            cjson = prev.cjson.overrideAttrs (o: {
-              cmakeFlags = (o.cmakeFlags or [ ]) ++ [ "-DENABLE_CUSTOM_COMPILER_FLAGS=OFF" ];
-            });
-          });
+          # cmocka's doCheck, cjson's -Werror block and mbedtls' darwin fixes all
+          # live in nix-lib's native-overlay now, and it autoWires into this very
+          # pkgsStatic — a copy here lands ON TOP of it. For mbedtls that was not
+          # merely redundant: the nested postConfigure clobbered its own saved
+          # $PWD and left the build phase outside build/ (no build.ninja).
+          sp = pkgs.pkgsStatic;
         in
         withTools ((ulib.nativeFixes.librist sp).override { stdenv = eng; });
 

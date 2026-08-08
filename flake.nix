@@ -13,15 +13,12 @@
   # shared `nativeFixes.librist` swaps OpenSSL → mbedtls and turns the tools
   # off (ffmpeg only wants librist.a); here we turn them back on.
   #
-  # Native (Linux/darwin): build under the unpin-llvm engine (all objects LLVM
-  # bitcode) and let mkStandaloneFlake's bitcode self-fold pack the four tools
-  # into one binary — no hand `ld -r`/objcopy surgery. Windows (mingw, no
-  # engine → native objects) still uses ./multicall.nix's objcopy fold, since
-  # objcopy cannot rewrite bitcode and must NOT run over an engine build.
+  # Every target builds under the unpin-llvm engine (all objects LLVM bitcode)
+  # and lets mkStandaloneFlake's bitcode self-fold pack the four tools into one
+  # binary — no hand `ld -r`/objcopy surgery.
   outputs = { self, unpins-lib }:
     let
       ulib = unpins-lib.lib;
-      mk = pkgs: extra: import ./multicall.nix { lib = pkgs.lib // ulib; } extra;
 
       # Pure C (no libc++), lto + link capture so the self-fold can relink the
       # four tools from the captured link inputs.
@@ -57,6 +54,7 @@
       # menu). Upstream ships no man pages for them either, so nothing to embed.
 
       engine = "unpin-llvm";
+      multicall.windows = true;
       multicall.programs = [
         { name = "ristsender"; }
         { name = "ristreceiver"; }
@@ -80,15 +78,9 @@
         in
         withTools ((ulib.nativeFixes.librist sp).override { stdenv = eng; });
 
-      # The tools are C with winpthreads; force the runtime static so the .exe
-      # carries no libwinpthread-1 / libgcc_s DLLs (the ninja link line that
-      # multicall.nix reuses doesn't carry mkStandaloneFlake's -all-static).
+      # mingw cross. No per-package stdenv swap: multicall.windows = true puts
+      # the whole set on the engine adapter already.
       windowsBuild = pkgs:
-        let cross = ulib.mingwStaticCross pkgs; in
-        mk pkgs {
-          pkgs = cross;
-          librist = ulib.nativeFixes.librist cross;
-          extraLinkFlags = "-static -static-libgcc";
-        };
+        withTools (ulib.nativeFixes.librist (ulib.mingwStaticCross pkgs));
     };
 }

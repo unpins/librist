@@ -46,4 +46,4 @@ The [Releases](https://github.com/unpins/librist/releases) page has standalone b
 - **No man pages** — librist ships none upstream; each tool prints its options with `--help`.
 - **Windows:** `mingw` cross, single `.exe`, no companion DLLs. Ships all four tools.
 
-Platform fixes live in [`nix-lib/native-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/native-overlay/librist.nix) + [`nix-lib/mingw-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/mingw-overlay/librist.nix); the multicall link recipe is in [`multicall.nix`](./multicall.nix).
+Platform fixes live in [`nix-lib/native-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/native-overlay/librist.nix) + [`nix-lib/mingw-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/mingw-overlay/librist.nix). The programs are folded into one binary by the unpin-llvm engine on every platform, Windows included.

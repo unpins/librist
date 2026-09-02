@@ -58,10 +58,11 @@
       engine = "unpin-llvm";
       multicall.windows = true;
       multicall.programs = [
-        { name = "ristsender"; }
-        { name = "ristreceiver"; }
-        { name = "rist2rist"; }
-        { name = "ristsrppasswd"; }
+        # librist installs no man pages at all.
+        { name = "ristsender"; noMan = true; }
+        { name = "ristreceiver"; noMan = true; }
+        { name = "rist2rist"; noMan = true; }
+        { name = "ristsrppasswd"; noMan = true; }
       ];
 
       # Engine + bitcode self-fold (native Linux + darwin): the four tools are

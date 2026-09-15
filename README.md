@@ -16,21 +16,24 @@ Low-latency, reliable transport of streams over lossy networks (RIST TR-06-1/2),
 Run a program with [unpin](https://github.com/unpins/unpin):
 
 ```bash
-unpin librist ristsender -i udp://:1234 -o rist://example:1968
-unpin librist ristreceiver -i rist://@:1968 -o udp://example:1234
+unpin librist --unpin-program=ristsender -i udp://@:1234 -o rist://example.com:1968
+unpin librist --unpin-program=ristreceiver -i rist://@:1968 -o udp://127.0.0.1:1234
 ```
 
-`unpin install librist` also creates the commands `ristsender` (send), `ristreceiver` (receive), `rist2rist` (relay) and `ristsrppasswd` (manage SRP password files):
+Or install them and call each by name, which is usually what you want:
 
 ```bash
 unpin install librist
+ristreceiver -i rist://@:1968 -o udp://127.0.0.1:1234
 ```
+
+`unpin install librist` creates the `ristsender` (send), `ristreceiver` (receive), `rist2rist` (relay) and `ristsrppasswd` (make SRP password entries) commands.
 
 ## Build locally
 
 ```bash
 nix build github:unpins/librist
-./result/bin/rist
+./result/bin/rist --unpin-program=ristsender --help
 ```
 
 The first invocation will offer to add the [unpins.cachix.org](https://unpins.cachix.org) substituter so most pulls come pre-built.
@@ -41,9 +44,7 @@ The [Releases](https://github.com/unpins/librist/releases) page has standalone b
 
 ## Build notes
 
-- **Single multicall binary** — the four tools are post-linked into one `rist`; tool names are recreated as `argv[0]` shims on install.
-- **mbedtls, not OpenSSL** — smaller crypto closure; SRP-authenticated and AES-encrypted streams work unchanged.
-- **No man pages** — librist ships none upstream; each tool prints its options with `--help`.
-- **Windows:** `mingw` cross, single `.exe`, no companion DLLs. Ships all four tools.
-
-Platform fixes live in [`nix-lib/native-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/native-overlay/librist.nix) + [`nix-lib/mingw-overlay/librist.nix`](https://github.com/unpins/nix-lib/blob/main/mingw-overlay/librist.nix). The programs are folded into one binary by the unpin-llvm engine on every platform, Windows included.
+- **One binary, `rist`,** holds the four programs; `unpin install` creates a command for each.
+- **Encryption uses mbedtls** instead of OpenSSL; AES-encrypted (`secret=`) and SRP-authenticated streams work unchanged.
+- **Windows:** a single `.exe`, no companion DLLs, with all four programs.
+- **No man pages** — librist ships none; each program prints its options with `--help`.

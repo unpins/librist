@@ -20,19 +20,6 @@
     let
       ulib = unpins-lib.lib;
 
-      # Pure C (no libc++), lto + link capture so the self-fold can relink the
-      # four tools from the captured link inputs.
-      engStdenv = pkgs:
-        let sp = pkgs.pkgsStatic; in
-        ulib.unpinAdapterStdenv {
-          inherit pkgs;
-          target = sp.stdenv.hostPlatform.config;
-          native = pkgs.stdenv.buildPlatform.system == pkgs.stdenv.hostPlatform.system;
-          cxx = false;
-          lto = true;
-          captureLinks = true;
-        };
-
       # nativeFixes.librist with the tools re-enabled (drop -Dbuilt_tools=false)
       # and a single output (we ship only the folded binary, no lib/headers/.pc).
       withTools = drv: drv.overrideAttrs (o: {
@@ -115,24 +102,15 @@
         { name = "ristsrppasswd"; noMan = true; }
       ];
 
-      # Engine + bitcode self-fold (native Linux + darwin): the four tools are
-      # C, so pkgsStatic already links musl statically and there is no libc++
-      # dance (cf. srt). Return the engine-built librist directly; the self-fold
-      # packs the tools.
+      # Engine + bitcode self-fold: pkgsStatic is already on the engine
+      # adapter (nix-lib swaps the whole set), so there is no per-package
+      # stdenv here, and the self-fold packs the four programs. cmocka's
+      # doCheck, cjson's -Werror block and mbedtls' darwin fixes live in
+      # nix-lib's native-overlay and autoWire into this pkgsStatic.
       build = pkgs:
-        let
-          eng = engStdenv pkgs;
-          # cmocka's doCheck, cjson's -Werror block and mbedtls' darwin fixes all
-          # live in nix-lib's native-overlay now, and it autoWires into this very
-          # pkgsStatic — a copy here lands ON TOP of it. For mbedtls that was not
-          # merely redundant: the nested postConfigure clobbered its own saved
-          # $PWD and left the build phase outside build/ (no build.ninja).
-          sp = pkgs.pkgsStatic;
-        in
-        withRoundTrip pkgs (withTools ((ulib.nativeFixes.librist sp).override { stdenv = eng; }));
+        withRoundTrip pkgs (withTools (ulib.nativeFixes.librist pkgs.pkgsStatic));
 
-      # mingw cross. No per-package stdenv swap: multicall.windows = true puts
-      # the whole set on the engine adapter already.
+      # mingw cross; multicall.windows = true puts the set on the engine too.
       windowsBuild = pkgs:
         withTools (ulib.nativeFixes.librist (ulib.mingwStaticCross pkgs));
     };

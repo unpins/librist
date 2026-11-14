@@ -39,8 +39,6 @@
         mesonFlags =
           (builtins.filter (f: f != "-Dbuilt_tools=false") (o.mesonFlags or [ ]))
           ++ [ "-Dbuilt_tools=true" ];
-        outputs = [ "out" ];
-        postInstall = "";
       });
 
       # A smoke that prints a password entry passes a binary that cannot carry a

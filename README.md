@@ -45,6 +45,6 @@ The [Releases](https://github.com/unpins/librist/releases) page has standalone b
 ## Build notes
 
 - **One binary, `rist`,** holds the four programs; `unpin install` creates a command for each.
-- **Encryption uses mbedtls** instead of OpenSSL; AES-encrypted (`secret=`) and SRP-authenticated streams work unchanged.
 - **Windows:** built with mingw-w64, with all four programs.
+- **Not included** (as in nixpkgs): the HTTP metrics endpoint (`--metrics-http`, `--metrics-port`, `--metrics-ip`), which needs libmicrohttpd — `--metrics-unix` still serves the same metrics on a Unix socket; and TUN devices (`tun://`, `--tun`), off by default upstream.
 - **No man pages** — librist ships none; each program prints its options with `--help`.

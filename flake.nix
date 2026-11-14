@@ -8,10 +8,10 @@
 
   inputs.unpins-lib.url = "github:unpins/nix-lib";
 
-  # librist ships four CLI tools (ristsender / ristreceiver / rist2rist /
-  # ristsrppasswd) folded into one argv[0]-dispatching `rist` binary. The
-  # shared `nativeFixes.librist` swaps OpenSSL → mbedtls and turns the tools
-  # off (ffmpeg only wants librist.a); here we turn them back on.
+  # librist ships four programs (ristsender / ristreceiver / rist2rist /
+  # ristsrppasswd) folded into one `rist` binary. The shared
+  # `nativeFixes.librist` turns the tests and the programs off (ffmpeg only
+  # wants librist.a); here the programs come back on.
   #
   # Every target builds under the unpin-llvm engine (all objects LLVM bitcode)
   # and lets mkStandaloneFlake's bitcode self-fold pack the four tools into one
@@ -20,8 +20,7 @@
     let
       ulib = unpins-lib.lib;
 
-      # nativeFixes.librist with the tools re-enabled (drop -Dbuilt_tools=false)
-      # and a single output (we ship only the folded binary, no lib/headers/.pc).
+      # nativeFixes.librist with the programs re-enabled (drop -Dbuilt_tools=false).
       withTools = drv: drv.overrideAttrs (o: {
         mesonFlags =
           (builtins.filter (f: f != "-Dbuilt_tools=false") (o.mesonFlags or [ ]))
@@ -85,12 +84,12 @@
       inherit self;
       dnsFallback = true; # resolves hostnames; opt into the Android DNS fallback
       name = "rist";
+      # ristsrppasswd prints a password entry and exits, which makes it the one
+      # program a smoke can run without opening a network transport.
       smoke = [ "--unpin-program=ristsrppasswd" "unpins-smoke" "secret" ];
       smokePattern = "^unpins-smoke:";
       # librist ships under BSD-2-Clause; the MIT/ISC bits are vendored helpers.
       license = "BSD-2-Clause";
-      # ristsrppasswd prints a password entry and exits, which makes it the one
-      # program a smoke can run without opening a network transport.
 
       engine = "unpin-llvm";
       multicall.windows = true;

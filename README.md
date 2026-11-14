@@ -46,5 +46,5 @@ The [Releases](https://github.com/unpins/librist/releases) page has standalone b
 
 - **One binary, `rist`,** holds the four programs; `unpin install` creates a command for each.
 - **Encryption uses mbedtls** instead of OpenSSL; AES-encrypted (`secret=`) and SRP-authenticated streams work unchanged.
-- **Windows:** a single `.exe`, no companion DLLs, with all four programs.
+- **Windows:** built with mingw-w64, with all four programs.
 - **No man pages** — librist ships none; each program prints its options with `--help`.
